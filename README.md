@@ -9,6 +9,7 @@ For Ruddle users, the following line will create symlinks to your samples:
 **Option 2**: Download your raw data to your laptop and then transfer them to the web sever via Globus.
 
 ## 1.2 Data rename and unzip
+Generally, the names for your raw data are too long and complicated for the reading and the following analysis. We'd better change their names. We can finish unzipping and name-changing in a single step. Note here `-c` means keeping the raw data; otherwise, the raw data will dispear and only the name-changed files will be kept.
 ```
 nohup gunzip -c Rse1-1_164_029_S59_L002_R1_001.fastq.gz > G1_Rep1_R1 &
 nohup gunzip -c Rse1-1_164_029_S59_L002_R2_001.fastq.gz > G1_Rep1_R2 &
@@ -24,9 +25,10 @@ nohup gunzip -c Rse1-5_116_077_S63_L002_R2_001.fastq.gz > G2_Rep2_R2 &
 nohup gunzip -c Rse1-6_104_089_S64_L002_R1_001.fastq.gz > G2_Rep3_R1 &
 nohup gunzip -c Rse1-6_104_089_S64_L002_R2_001.fastq.gz > G2_Rep3_R2 &
 ```
-
 ## 2. QC and Data trimming
-Generally, we need to check the quailty of our raw data and trim the low-quaility data.
+Generally, we need to check the quailty of our raw data and trim the low-quaility data. FastQC, a java written software, is developed by the Bioinformatics Group at the Babraham Institute, UK. It's thought to be the most used software for next generation sequences QC.
+
+For yale web server users, firstly you need to load the software you need for analysis via `module load FastQC/0.11.9-Java-11`. However, you need to know which software we have in the yale web server via `module avail` to see all the available softwares.
 ### 2.1 QC
 ```
 module load FastQC/0.11.9-Java-11
@@ -44,13 +46,14 @@ nohup fastqc G2_Rep2_R2.fastq &
 nohup fastqc G2_Rep3_R1.fastq &
 nohup fastqc G2_Rep3_R2.fastq &
 ```
-For the interpretation of QC reports, you can refer to the following materials.
+After the QC, we will get two files, one ended up with .html and the other with .zip. For .html files, you can transfer them to your laptop and open them with your web browser. For the interpretation of QC reports, you can refer to the following materials.
 
 Chinese version: https://blog.csdn.net/weixin_43569478/article/details/108079243
 
 English version: https://hbctraining.github.io/Intro-to-rnaseq-hpc-salmon/lessons/qc_fastqc_assessment.html
 
 ### 2.2 Trimming
+When trimming your data, you need to figure: 1) whether your data is paired reads, it's easy to confrim; 2) which sequencing machine you used for sequencing.
 ```
 module load Trim_Galore/0.6.6-GCCcore-10.2.0-Python-3.8.6
 nohup trim_galore --paired --illumina G1_Rep1_R1.fastq G1_Rep1_R2.fastq &
@@ -63,12 +66,23 @@ nohup trim_galore --paired --illumina G2_Rep3_R1.fastq G2_Rep3_R2.fastq &
 ```
 
 ## 3. Mapping
+Mapping is the most important step for RNA-seq analysis.
 ### 3.1 Preparing the human reference genome
-https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.40
+You can download the human reference genome from the following link: https://www.ncbi.nlm.nih.gov/assembly/GCF_000001405.40. Note that you need to download both reference genome data (.fna) and annotation data (.gft). You can download them to you laptop and then tranfer then to the web server. Also, you can download them to the web server directly via `wget link_address`.
+
 ```
+wget https://www.ncbi.nlm.nih.gov/projects/r_gencoll/ftp_service/nph-gc-ftp-service.cgi/?HistoryId=MCID_6390e4bdef461250ef424de0&QueryKey=1&ReleaseType=RefSeq&FileType=GENOME_FASTA&Flat=true
+
+wget https://www.ncbi.nlm.nih.gov/projects/r_gencoll/ftp_service/nph-gc-ftp-service.cgi/?HistoryId=MCID_6390e4bdef461250ef424de0&QueryKey=1&ReleaseType=RefSeq&FileType=GENOME_GTF&Flat=true
+
 nohup gunzip GCF_000001405.40_GRCh38.p14_genomic.fna.gz &
 nohup gunzip GCF_000001405.40_GRCh38.p14_genomic.gtf.gz &
 ```
+Then you need to build the reference genome because they can't be used directly.
+```
+nohup hisat2-build GCF_000001405.40_GRCh38.p14_genomic.fna hisat2_built_Genome 1>hisat2-build.log 2>&1 &
+```
+After the building, you will get 8 files.
 
 ### 3.2 Mapping to the reference genome
 ```
