@@ -26,10 +26,11 @@ nohup gunzip -c Rse1-6_104_089_S64_L002_R1_001.fastq.gz > G2_Rep3_R1 &
 nohup gunzip -c Rse1-6_104_089_S64_L002_R2_001.fastq.gz > G2_Rep3_R2 &
 ```
 ## 2. QC and Data trimming
-Generally, we need to check the quailty of our raw data and trim the low-quaility data. FastQC, a java written software, is developed by the Bioinformatics Group at the Babraham Institute, UK. It's thought to be the most used software for next generation sequences QC.
+Generally, we need to check the quailty of our raw data and trim the low-quaility data. 
+### 2.1 QC
+FastQC, a java written software, is developed by the Bioinformatics Group at the Babraham Institute, UK. It's thought to be the most used software for next generation sequences QC.
 
 For yale web server users, firstly you need to load the software you need for analysis via `module load FastQC/0.11.9-Java-11`. However, you need to know which software we have in the yale web server via `module avail` to see all the available softwares.
-### 2.1 QC
 ```
 module load FastQC/0.11.9-Java-11
 nohup fastqc G1_Rep1_R1.fastq &
