@@ -1,11 +1,12 @@
 # Yao_RNA_seq
 ## 1.1 Data preparation
 
-**Option 1**:
-
-**Option 2**: Download your raw data to the 
-
-
+**Option 1**: You can download from the link they provided.
+For Ruddle users, the following line will create symlinks to your samples:
+```
+/home/bioinfo/software/knightlab/bin_Mar2018/ycgaFastq  fcb.ycga.yale.edu:3010/HqlP2H0hKOLOqu0y4PJZawtU6UwEk/sample_dir_000009572
+```
+**Option 2**: Download your raw data to your laptop and then transfer them to the web sever via Globus.
 
 ## 1.2 Data rename and unzip
 ```
@@ -43,6 +44,12 @@ nohup fastqc G2_Rep2_R2.fastq &
 nohup fastqc G2_Rep3_R1.fastq &
 nohup fastqc G2_Rep3_R2.fastq &
 ```
+For the interpretation of QC reports, you can refer to the following materials.
+
+Chinese version: https://blog.csdn.net/weixin_43569478/article/details/108079243
+
+English version: https://hbctraining.github.io/Intro-to-rnaseq-hpc-salmon/lessons/qc_fastqc_assessment.html
+
 ### 2.2 Trimming
 ```
 module load Trim_Galore/0.6.6-GCCcore-10.2.0-Python-3.8.6
